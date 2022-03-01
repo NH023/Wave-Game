@@ -1,6 +1,7 @@
 import pygame
 from board import Board
 from player import Player
+from gun import Gun
 
 def special_division(f,s):
   return f/s if s else 0
@@ -30,13 +31,18 @@ class Basic(Enemy):
     self.color = (255,0,0)
     self.health = 10
     super().__init__(self.size,self.color,pos)
+    #super().__class__.instances.append(self)
 
   def move(self):
     playerpos = (Player.rect.centerx,Player.rect.centery)
     enemypos = (self.rect.centerx,self.rect.centery)
 
     x_move = special_division((playerpos[0] - enemypos[0]),abs(playerpos[0] - enemypos[0])) * self.speed
+    if x_move > playerpos[0]:
+      x_move = playerpos[0]
     y_move = special_division((playerpos[1] - enemypos[1]),abs(playerpos[1] - enemypos[1])) * self.speed
+    if y_move > playerpos[1]:
+      y_move = playerpos[1]
     
     self.rect.move_ip(x_move,y_move)
     
@@ -60,6 +66,7 @@ class Speeder(Enemy):
     self.increment = 0.2
     self.health = 10
     super().__init__(self.size,self.color,pos)
+    #super().__class__.instances.append(self)
     
     
   def move(self):
@@ -67,7 +74,11 @@ class Speeder(Enemy):
     enemypos = (self.rect.centerx,self.rect.centery)
 
     x_move = special_division((playerpos[0] - enemypos[0]),abs(playerpos[0] - enemypos[0])) * self.speed
+    if x_move > playerpos[0]:
+      x_move = playerpos[0]
     y_move = special_division((playerpos[1] - enemypos[1]),abs(playerpos[1] - enemypos[1])) * self.speed
+    if y_move > playerpos[1]:
+      y_move = playerpos[1]
     
     self.rect.move_ip(x_move,y_move)
     
@@ -83,3 +94,43 @@ class Speeder(Enemy):
     self.speed += self.increment
 
   
+class Blaster(Enemy):
+  #Shoots Bullets
+  def __init__(self,pos):
+    self.type = "blaster"
+    self.size = (15,15)
+    self.color = (175,4,175)
+    self.speed = 1
+    self.increment = 0.2
+    self.health = 10
+    self.gun = Gun()
+    super().__init__(self.size,self.color,pos)
+    #super().__class__.instances.append(self)
+    
+    
+  def move(self):
+    playerpos = (Player.rect.centerx,Player.rect.centery)
+    enemypos = (self.rect.centerx,self.rect.centery)
+
+    x_move = special_division((playerpos[0] - enemypos[0]),abs(playerpos[0] - enemypos[0])) * self.speed
+    if x_move > playerpos[0]:
+      x_move = playerpos[0]
+    y_move = special_division((playerpos[1] - enemypos[1]),abs(playerpos[1] - enemypos[1])) * self.speed
+    if y_move > playerpos[1]:
+      y_move = playerpos[1]
+    
+    self.rect.move_ip(x_move,y_move)
+    
+    if self.rect.top <= 0:
+        self.rect.top = 0
+    if self.rect.bottom >= self.BOARD_HEIGHT:
+        self.rect.bottom = self.BOARD_HEIGHT
+    if self.rect.left <= 0:
+        self.rect.left = 0
+    if self.rect.right >= self.BOARD_WIDTH:
+        self.rect.right = self.BOARD_WIDTH
+
+    self.gun.update()
+    
+  def shoot(self):
+    self.gun.create((self.rect.centerx,self.rect.centery),(Player.rect.centerx,Player.rect.centery))
