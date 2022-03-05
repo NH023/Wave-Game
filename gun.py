@@ -1,7 +1,5 @@
 import pygame
 from board import Board
-from player import Player
-from fractions import Fraction
 import math
 
 
@@ -15,6 +13,7 @@ class Gun(pygame.sprite.Sprite,Board):
         self.speed = 15
         self.isShooting = False
         self.bullets = []
+        self.idCount = 0
         super().__init__()
 
     
@@ -26,13 +25,22 @@ class Gun(pygame.sprite.Sprite,Board):
         rect = surf.get_rect(
             center=initialpos
         )
+    
 
         self.bullets.append({
+          "id": self.idCount,
           "surf": surf,
           "initialpos": initialpos,
           "endpos":endpos,
           "rect": rect
         })
+        self.idCount += 1
+
+    def remove(self,bullet):
+      for index in range(len(self.bullets)):
+        if self.bullets[index]['id'] == bullet["id"]:
+          del self.bullets[index]
+          break
 
 
     def shooting(self,events=[]):

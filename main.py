@@ -2,7 +2,6 @@ import pygame
 from player import Player
 from enemy import Basic, Speeder, Blaster
 from board import Board
-from gun import Gun
 import time
 pygame.init()
 
@@ -21,7 +20,6 @@ player = Player((BOARD_WIDTH/2,BOARD_HEIGHT/2))
 current_enemies = [Basic((20,20)),Speeder((70,70)),Blaster((120,120))]
 gunCooldown = 0.5
 lastBulletFire = time.time()
-gun = Gun()
 
 def increaseing():
   for i in current_enemies:
@@ -47,9 +45,9 @@ while running:
     player.move(pressed_keys)
     if pressed_keys[pygame.K_k]:
       for i in current_enemies:
-        i.doom()
+        i.update()
     if pressed_keys[pygame.K_e]:
-      print([i["rect"] for i in gun.bullets])
+      print([i["rect"] for i in player.gun.bullets])
 
 
     screen.fill(BACKGROUND_COLOR)
@@ -60,27 +58,21 @@ while running:
         screen.blit(enemy.surf, enemy.rect)
       else:
         current_enemies.remove(enemy)
-      enemy.move()
+      enemy.update()
 
-    gun.shooting(events)
+    player.gun.shooting(events)
 
 
-    if gun.isShooting:
+    if player.gun.isShooting:
       if lastBulletFire+gunCooldown < time.time():
         lastBulletFire = time.time()
-        gun.create((player.rect.centerx,playeddr.rect.centery),pygame.mouse.get_pos())
+        player.gun.create((player.rect.centerx,player.rect.centery),pygame.mouse.get_pos())
 
-    gun.update()
+    player.gun.update()
 
     #Flip Display
     pygame.display.flip()
-    if increment_time+1 < time.time():
-      increaseing()
-      increment_time = time.time()
     
-    if blaster_time+1 < time.time():
-      blastershooting()
-      blaster_time = time.time()
-    clock.tick(30)
+    clock.tick(7)
 
 pygame.quit()

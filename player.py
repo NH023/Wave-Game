@@ -1,5 +1,6 @@
 import pygame
 from board import Board
+from gun import Gun
 class Player(pygame.sprite.Sprite,Board):
     def __init__(self,pos):
         super().__init__()
@@ -9,6 +10,7 @@ class Player(pygame.sprite.Sprite,Board):
             center=pos
         )
         self.speed = 10
+        Player.gun = Gun()
 
     def move(self,pressed_keys):
         if pressed_keys[pygame.K_w] or pressed_keys[pygame.K_UP]:

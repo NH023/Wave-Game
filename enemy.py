@@ -1,4 +1,5 @@
 import pygame
+import time
 from board import Board
 from player import Player
 from gun import Gun
@@ -17,10 +18,24 @@ class Enemy(pygame.sprite.Sprite,Board):
       center=pos
     )
     self.isAlive = True
+    self.checkables = ["move","shoot","pain"]
     
   def doom(self):
     self.kill()
     self.isAlive = False
+
+  def pain(self):
+    #Get all of the player bullets shot and if any collide with the enemy, then life is lost. That bullet then gets deleted.
+    players_bullets = Player.gun.bullets
+    for bullet in players_bullets:
+      #if self.rect.left < bullet["rect"].centery < self.rect.right and self.rect.top < bullet["rect"].centerx < self.rect.bottom:
+      if self.rect.colliderect(bullet['rect']):
+        self.health -= 1
+        print(self.health,self.type)
+        Player.gun.remove(bullet)
+        if self.health < 1:
+          self.doom()
+
 
 
 class Basic(Enemy):
@@ -29,7 +44,7 @@ class Basic(Enemy):
     self.speed = 2
     self.size = (20,20)
     self.color = (255,0,0)
-    self.health = 10
+    self.health = 2
     super().__init__(self.size,self.color,pos)
     #super().__class__.instances.append(self)
 
@@ -54,7 +69,9 @@ class Basic(Enemy):
         self.rect.left = 0
     if self.rect.right >= self.BOARD_WIDTH:
         self.rect.right = self.BOARD_WIDTH
-
+  def update(self):
+    self.move()
+    self.pain()
 
 class Speeder(Enemy):
   #Increases Speed Over Time
@@ -64,7 +81,7 @@ class Speeder(Enemy):
     self.color = (100,175,175)
     self.speed = 1
     self.increment = 0.2
-    self.health = 10
+    self.health = 2
     super().__init__(self.size,self.color,pos)
     #super().__class__.instances.append(self)
     
@@ -93,6 +110,13 @@ class Speeder(Enemy):
   def increaseSpeed(self):
     self.speed += self.increment
 
+  def update(self):
+    self.move()
+    if self.incrementTime+1 < time.time():
+      self.speed += self.increment
+      self.incrementTime = time.time()
+    self.pain()
+    
   
 class Blaster(Enemy):
   #Shoots Bullets
@@ -101,11 +125,11 @@ class Blaster(Enemy):
     self.size = (15,15)
     self.color = (175,4,175)
     self.speed = 1
-    self.increment = 0.2
-    self.health = 10
+    self.blasterTime = time.time()
+    self.health = 1
     self.gun = Gun()
     super().__init__(self.size,self.color,pos)
-    #super().__class__.instances.append(self)
+  
     
     
   def move(self):
@@ -134,3 +158,10 @@ class Blaster(Enemy):
     
   def shoot(self):
     self.gun.create((self.rect.centerx,self.rect.centery),(Player.rect.centerx,Player.rect.centery))
+
+  def update(self):
+    if self.blasterTime+1 < time.time():
+      self.shoot()
+      self.blasterTime = time.time()
+    self.pain()
+    
