@@ -1,4 +1,5 @@
 import pygame
+import time
 from board import Board
 from gun import Gun
 class Player(pygame.sprite.Sprite,Board):
@@ -11,6 +12,8 @@ class Player(pygame.sprite.Sprite,Board):
         )
         self.speed = 10
         Player.gun = Gun()
+        self.last_shot = time.time()
+        self.gunCooldown = 0.5
 
     def move(self,pressed_keys):
         if pressed_keys[pygame.K_w] or pressed_keys[pygame.K_UP]:
@@ -30,3 +33,14 @@ class Player(pygame.sprite.Sprite,Board):
             self.rect.left = 0
         if self.rect.right >= self.BOARD_WIDTH:
             self.rect.right = self.BOARD_WIDTH
+
+    def update(self,pressed_keys,events):
+        self.move(pressed_keys)
+        self.gun.shooting(events)
+        if self.gun.isShooting:
+            if self.last_shot+self.gunCooldown < time.time():
+                self.last_shot = time.time()
+                self.gun.create((self.rect.centerx,self.rect.centery),pygame.mouse.get_pos())
+        self.gun.update()
+
+        

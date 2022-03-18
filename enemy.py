@@ -72,6 +72,7 @@ class Basic(Enemy):
   def update(self):
     self.move()
     self.pain()
+    Board.screen.blit(self.surf, self.rect)
 
 class Speeder(Enemy):
   #Increases Speed Over Time
@@ -81,6 +82,7 @@ class Speeder(Enemy):
     self.color = (100,175,175)
     self.speed = 1
     self.increment = 0.2
+    self.incrementTime = time.time()
     self.health = 2
     super().__init__(self.size,self.color,pos)
     #super().__class__.instances.append(self)
@@ -116,6 +118,7 @@ class Speeder(Enemy):
       self.speed += self.increment
       self.incrementTime = time.time()
     self.pain()
+    Board.screen.blit(self.surf, self.rect)
     
   
 class Blaster(Enemy):
@@ -131,31 +134,6 @@ class Blaster(Enemy):
     super().__init__(self.size,self.color,pos)
   
     
-    
-  def move(self):
-    playerpos = (Player.rect.centerx,Player.rect.centery)
-    enemypos = (self.rect.centerx,self.rect.centery)
-
-    x_move = special_division((playerpos[0] - enemypos[0]),abs(playerpos[0] - enemypos[0])) * self.speed
-    if x_move > playerpos[0]:
-      x_move = playerpos[0]
-    y_move = special_division((playerpos[1] - enemypos[1]),abs(playerpos[1] - enemypos[1])) * self.speed
-    if y_move > playerpos[1]:
-      y_move = playerpos[1]
-    
-    self.rect.move_ip(x_move,y_move)
-    
-    if self.rect.top <= 0:
-        self.rect.top = 0
-    if self.rect.bottom >= self.BOARD_HEIGHT:
-        self.rect.bottom = self.BOARD_HEIGHT
-    if self.rect.left <= 0:
-        self.rect.left = 0
-    if self.rect.right >= self.BOARD_WIDTH:
-        self.rect.right = self.BOARD_WIDTH
-
-    self.gun.update()
-    
   def shoot(self):
     self.gun.create((self.rect.centerx,self.rect.centery),(Player.rect.centerx,Player.rect.centery))
 
@@ -163,5 +141,7 @@ class Blaster(Enemy):
     if self.blasterTime+1 < time.time():
       self.shoot()
       self.blasterTime = time.time()
+    self.gun.update()
     self.pain()
+    Board.screen.blit(self.surf, self.rect)
     
