@@ -1,13 +1,13 @@
 import pygame
 import time
-from board import Board
 from player import Player
 from gun import Gun
+import game
 
 def special_division(f,s):
   return f/s if s else 0
 
-class Enemy(pygame.sprite.Sprite,Board):
+class Enemy(pygame.sprite.Sprite):
   instances = []
   def __init__(self, size, color, pos):
     super().__init__()
@@ -18,23 +18,17 @@ class Enemy(pygame.sprite.Sprite,Board):
       center=pos
     )
     self.isAlive = True
-    self.checkables = ["move","shoot","pain"]
     
-  def doom(self):
-    self.kill()
-    self.isAlive = False
+  def checkIfDead(self):
+    if self.health <= 0:
+      self.kill()
+      self.isAlive = False
+      self.__class__.instances.remove(self)
 
-  def pain(self):
-    #Get all of the player bullets shot and if any collide with the enemy, then life is lost. That bullet then gets deleted.
-    players_bullets = Player.gun.bullets
-    for bullet in players_bullets:
-      #if self.rect.left < bullet["rect"].centery < self.rect.right and self.rect.top < bullet["rect"].centerx < self.rect.bottom:
-      if self.rect.colliderect(bullet['rect']):
-        self.health -= 1
-        print(self.health,self.type)
-        Player.gun.remove(bullet)
-        if self.health < 1:
-          self.doom()
+  def damage(self):
+    self.health -= 1
+    self.checkIfDead()
+      
 
 
 
@@ -63,16 +57,16 @@ class Basic(Enemy):
     
     if self.rect.top <= 0:
         self.rect.top = 0
-    if self.rect.bottom >= self.BOARD_HEIGHT:
-        self.rect.bottom = self.BOARD_HEIGHT
+    if self.rect.bottom >= game.Game.BOARD_HEIGHT:
+        self.rect.bottom = game.Game.BOARD_HEIGHT
     if self.rect.left <= 0:
         self.rect.left = 0
-    if self.rect.right >= self.BOARD_WIDTH:
-        self.rect.right = self.BOARD_WIDTH
+    if self.rect.right >= game.Game.BOARD_WIDTH:
+        self.rect.right = game.Game.BOARD_WIDTH
+
   def update(self):
     self.move()
-    self.pain()
-    Board.screen.blit(self.surf, self.rect)
+    game.Game.screen.blit(self.surf, self.rect)
 
 class Speeder(Enemy):
   #Increases Speed Over Time
@@ -103,12 +97,12 @@ class Speeder(Enemy):
     
     if self.rect.top <= 0:
         self.rect.top = 0
-    if self.rect.bottom >= self.BOARD_HEIGHT:
-        self.rect.bottom = self.BOARD_HEIGHT
+    if self.rect.bottom >= game.Game.BOARD_HEIGHT:
+        self.rect.bottom = game.Game.BOARD_HEIGHT
     if self.rect.left <= 0:
         self.rect.left = 0
-    if self.rect.right >= self.BOARD_WIDTH:
-        self.rect.right = self.BOARD_WIDTH
+    if self.rect.right >= game.Game.BOARD_WIDTH:
+        self.rect.right = game.Game.BOARD_WIDTH
   def increaseSpeed(self):
     self.speed += self.increment
 
@@ -117,8 +111,7 @@ class Speeder(Enemy):
     if self.incrementTime+1 < time.time():
       self.speed += self.increment
       self.incrementTime = time.time()
-    self.pain()
-    Board.screen.blit(self.surf, self.rect)
+    game.Game.screen.blit(self.surf, self.rect)
     
   
 class Blaster(Enemy):
@@ -142,6 +135,5 @@ class Blaster(Enemy):
       self.shoot()
       self.blasterTime = time.time()
     self.gun.update()
-    self.pain()
-    Board.screen.blit(self.surf, self.rect)
+    game.Game.screen.blit(self.surf, self.rect)
     

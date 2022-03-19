@@ -1,6 +1,6 @@
 import pygame
-from board import Board
 import math
+import game
 
 
 
@@ -8,7 +8,7 @@ def special_division(f,s):
   return f/s if s else 0
 
 
-class Gun(pygame.sprite.Sprite,Board):
+class Gun(pygame.sprite.Sprite):
     def __init__(self):
         self.speed = 15
         self.isShooting = False
@@ -53,7 +53,7 @@ class Gun(pygame.sprite.Sprite,Board):
     def prune(self):
         #Gets rid of all bullets not on screen
         for bullet in self.bullets:
-            if bullet["rect"].top <= 0 or bullet["rect"].bottom >= self.BOARD_HEIGHT or bullet["rect"].left <= 0 or bullet["rect"].right >= self.BOARD_WIDTH:
+            if bullet["rect"].top <= 0 or bullet["rect"].bottom >= game.Game.BOARD_HEIGHT or bullet["rect"].left <= 0 or bullet["rect"].right >= game.Game.BOARD_WIDTH:
                 self.bullets.remove(bullet)
     
     def update(self):
@@ -68,7 +68,7 @@ class Gun(pygame.sprite.Sprite,Board):
 
             bullet["rect"].move_ip(dx,dy)          
             
-            self.screen.blit(bullet["surf"],bullet["rect"])
+            game.Game.screen.blit(bullet["surf"],bullet["rect"])
         
         self.prune()
 

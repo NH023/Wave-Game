@@ -1,8 +1,9 @@
 import pygame
 import time
-from board import Board
+import game
 from gun import Gun
-class Player(pygame.sprite.Sprite,Board):
+
+class Player(pygame.sprite.Sprite):
     def __init__(self,pos):
         super().__init__()
         self.surf = pygame.Surface((25,25))
@@ -14,6 +15,7 @@ class Player(pygame.sprite.Sprite,Board):
         Player.gun = Gun()
         self.last_shot = time.time()
         self.gunCooldown = 0.5
+        self.isAlive = True
 
     def move(self,pressed_keys):
         if pressed_keys[pygame.K_w] or pressed_keys[pygame.K_UP]:
@@ -27,12 +29,12 @@ class Player(pygame.sprite.Sprite,Board):
 
         if self.rect.top <= 0:
             self.rect.top = 0
-        if self.rect.bottom >= self.BOARD_HEIGHT:
-            self.rect.bottom = self.BOARD_HEIGHT
+        if self.rect.bottom >= game.Game.BOARD_HEIGHT:
+            self.rect.bottom = game.Game.BOARD_HEIGHT
         if self.rect.left <= 0:
             self.rect.left = 0
-        if self.rect.right >= self.BOARD_WIDTH:
-            self.rect.right = self.BOARD_WIDTH
+        if self.rect.right >= game.Game.BOARD_WIDTH:
+            self.rect.right = game.Game.BOARD_WIDTH
 
     def update(self,pressed_keys,events):
         self.move(pressed_keys)
@@ -42,5 +44,9 @@ class Player(pygame.sprite.Sprite,Board):
                 self.last_shot = time.time()
                 self.gun.create((self.rect.centerx,self.rect.centery),pygame.mouse.get_pos())
         self.gun.update()
+        game.Game.screen.blit(self.surf, self.rect)
+    def doom(self):
+        self.kill()
+        self.isAlive = False
 
         
