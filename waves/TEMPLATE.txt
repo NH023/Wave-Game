@@ -1,0 +1,19 @@
+To create waves there is a certain format that the computers will read.
+Currently, the code goes as follows.
+
+B = Basic
+s = Speeder
+b = Blaster
+
+First place the single letter code and then follow with the coordinates for spawning.
+Example:
+
+B 100 100
+b 250 75
+b 50 60
+B 200 100
+
+This spawns a Basic at (100,100), a Blaster at (250,75), a Blaster at (50,60) and a Basic at (200,100).
+
+These are absolute coordinates and this will stay in the first instance of waves.
+Later on, the coordinates will be able to be relative to the screen size for different screen sizes and playing fields.

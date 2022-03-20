@@ -1,6 +1,7 @@
 import pygame
 from player import Player
 from enemy import Enemy, Basic, Speeder, Blaster
+from waveHandler import waveHandler
 
 class Game():
   def __init__(self,BOARD_WIDTH,BOARD_HEIGHT,caption):
@@ -9,6 +10,7 @@ class Game():
     Game.screen = pygame.display.set_mode((BOARD_WIDTH,BOARD_HEIGHT))
     Game.caption = pygame.display.set_caption(caption)
     Game.player = Player((Game.BOARD_WIDTH/2,Game.BOARD_HEIGHT/2))
+    Game.waveHandler = waveHandler()
   
 
   #Get the object that needs to be checked for damage, if its the player, then get all enemies and enemy bullets, if any collide with the player, then damage the player. If its the enemy, get all player bullets and check if any collide with the enemy, if so, damage the enemy.
@@ -34,8 +36,9 @@ class Game():
     clock = pygame.time.Clock()
 
     #Create enemies
-    current_enemies = [Basic((20,20)),Speeder((70,70)),Blaster((120,120))]
-
+    #current_enemies = [Basic((20,20)),Speeder((70,70)),Blaster((120,120))]
+    
+    #print(current_enemies)
 
     #Main Loop
     while running:
@@ -49,6 +52,7 @@ class Game():
 
       #Check for damage
       self.check_damage()
+      current_enemies = self.waveHandler.currentEnemies
 
       #Draw
       Game.screen.fill((255,255,255))
@@ -65,25 +69,12 @@ class Game():
         if enemy.isAlive:
           enemy.update()
         else:
-          current_enemies.remove(enemy)
+          self.waveHandler.currentEnemies.remove(enemy)
 
+      self.waveHandler.check()
 
       #Flip Display
       pygame.display.flip()
       #Update Clock
       clock.tick(30)
 
-
-
-  #Can be worked around later
-
-
-  # def boundDetection(self,rect):
-  #   if self.rect.top <= 0:
-  #       self.rect.top = 0
-  #   if self.rect.bottom >= self.BOARD_HEIGHT:
-  #       self.rect.bottom = self.BOARD_HEIGHT
-  #   if self.rect.left <= 0:
-  #       self.rect.left = 0
-  #   if self.rect.right >= self.BOARD_WIDTH:
-  #       self.rect.right = self.BOARD_WIDTH
