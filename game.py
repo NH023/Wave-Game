@@ -35,11 +35,6 @@ class Game():
     running = True
     clock = pygame.time.Clock()
 
-    #Create enemies
-    #current_enemies = [Basic((20,20)),Speeder((70,70)),Blaster((120,120))]
-    
-    #print(current_enemies)
-
     #Main Loop
     while running:
       events = pygame.event.get()
@@ -70,8 +65,9 @@ class Game():
           enemy.update()
         else:
           self.waveHandler.currentEnemies.remove(enemy)
-
-      self.waveHandler.check()
+      n=self.waveHandler.check()
+      if not n:
+        running = False
 
       #Flip Display
       pygame.display.flip()

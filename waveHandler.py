@@ -40,8 +40,9 @@ class waveHandler():
         if len(self.currentEnemies) < 1:
             if self.currentRound+1 > len(self.waves):
                 print("GG Congrats, You Won")
-                exit()
+                return False
             self.nextRound()
+        return True
 
     def spawnEnemy(self,enemy):
         self.currentEnemies.append(enemy)

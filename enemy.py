@@ -75,7 +75,7 @@ class Speeder(Enemy):
     self.size = (15,15)
     self.color = (100,175,175)
     self.speed = 1
-    self.increment = 0.2
+    self.increment = 1
     self.incrementTime = time.time()
     self.health = 2
     super().__init__(self.size,self.color,pos)
