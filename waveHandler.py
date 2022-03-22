@@ -1,5 +1,6 @@
 from enemy import Basic, Speeder, Blaster
 import os
+import game
 
 class waveHandler():
     def __init__(self):
@@ -10,6 +11,7 @@ class waveHandler():
         wavefiles = filter(lambda x: x != "TEMPLATE.txt", os.listdir("waves"))
         for wavefile in wavefiles:
             with open("waves/"+wavefile, "r") as f:
+                print(wavefile)
                 self.waves.append(f.read().split('\n'))
 
 
@@ -20,8 +22,11 @@ class waveHandler():
 
         for enemy in newWave:
             eType, xPos,yPos = enemy.split(' ')
-            xPos = int(xPos)
-            yPos = int(yPos)
+            xPos = float(xPos)
+            yPos = float(yPos)
+
+            xPos = game.Game.BOARD_WIDTH * xPos
+            yPos = game.Game.BOARD_HEIGHT * yPos
 
             if eType == 'B':
                 newEnemies.append(Basic((xPos,yPos)))  
@@ -43,6 +48,3 @@ class waveHandler():
                 return False
             self.nextRound()
         return True
-
-    def spawnEnemy(self,enemy):
-        self.currentEnemies.append(enemy)

@@ -1,6 +1,6 @@
 import pygame
 from player import Player
-from enemy import Enemy, Basic, Speeder, Blaster
+from enemy import Enemy
 from waveHandler import waveHandler
 
 class Game():

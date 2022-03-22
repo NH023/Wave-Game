@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 10
         Player.gun = Gun()
         self.last_shot = time.time()
-        self.gunCooldown = 0.5
+        self.gunCooldown = 0
         self.isAlive = True
 
     def move(self,pressed_keys):
