@@ -2,6 +2,7 @@ import pygame
 from player import Player
 from enemy import Enemy
 from waveHandler import waveHandler
+pygame.font.init()
 
 class Game():
   def __init__(self,BOARD_WIDTH,BOARD_HEIGHT,caption):
@@ -11,6 +12,7 @@ class Game():
     Game.caption = pygame.display.set_caption(caption)
     Game.player = Player((Game.BOARD_WIDTH/2,Game.BOARD_HEIGHT/2))
     Game.waveHandler = waveHandler()
+    Game.font = pygame.font.Font('freesansbold.ttf', 30)
   
 
   #Get the object that needs to be checked for damage, if its the player, then get all enemies and enemy bullets, if any collide with the player, then damage the player. If its the enemy, get all player bullets and check if any collide with the enemy, if so, damage the enemy.
@@ -23,7 +25,6 @@ class Game():
         for bullet in enemy.gun.bullets:
           if Player.rect.colliderect(bullet["rect"]):
             Game.player.doom()
-            enemy.gun.remove(bullet)
     for enemy in Enemy.instances:
       for bullet in Game.player.gun.bullets:
         if enemy.rect.colliderect(bullet["rect"]):
@@ -51,8 +52,7 @@ class Game():
 
       #Draw
       Game.screen.fill((255,255,255))
-
-
+      
       #Update player
       if Game.player.isAlive:
         Game.player.update(pressed_keys,events)
