@@ -1,18 +1,19 @@
 from enemy import Basic, Speeder, Blaster
+from player import Player
 import os
 import game
 import pygame
 import time
 
-class waveHandler():
+class WaveHandler():
     def __init__(self):
         self.currentRound = 0
         self.currentEnemies = []
         self.waves = []
         #Load the waves from the file
-        wavefiles = filter(lambda x: x != "TEMPLATE.txt", os.listdir("waves"))
+        wavefiles = filter(lambda x: x != "TEMPLATE.txt", os.listdir("src/waves"))
         for wavefile in wavefiles:
-            with open("waves/"+wavefile, "r") as f:
+            with open("src/waves/"+wavefile, "r") as f:
                 print(wavefile)
                 self.waves.append(f.read().split('\n'))
         self.font = pygame.font.Font('freesansbold.ttf', 30)
@@ -23,6 +24,9 @@ class waveHandler():
         print("Current Round: " + str(self.currentRound + 1))
         newWave = self.waves[self.currentRound]
         newEnemies = []
+
+        for bullet in Player.gun.bullets:
+            Player.gun.delete(bullet)
 
         self.splash()
       

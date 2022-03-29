@@ -8,10 +8,10 @@ def special_division(f,s):
   return f/s if s else 0
 
 class Enemy(pygame.sprite.Sprite):
-  instances = []
+  #instances = []
   def __init__(self, size, color, pos):
     super().__init__()
-    self.__class__.instances.append(self)
+    #self.__class__.instances.append(self)
     self.surf = pygame.Surface(size)
     self.surf.fill(color)
     self.rect = self.surf.get_rect(
@@ -23,7 +23,7 @@ class Enemy(pygame.sprite.Sprite):
     if self.health <= 0:
       self.kill()
       self.isAlive = False
-      self.__class__.instances.remove(self)
+      #self.__class__.instances.remove(self)
 
   def damage(self):
     self.health -= 1

@@ -1,7 +1,7 @@
 import pygame
 from player import Player
 from enemy import Enemy
-from waveHandler import waveHandler
+from WaveHandler import WaveHandler
 pygame.font.init()
 
 class Game():
@@ -11,13 +11,13 @@ class Game():
     Game.screen = pygame.display.set_mode((BOARD_WIDTH,BOARD_HEIGHT))
     Game.caption = pygame.display.set_caption(caption)
     Game.player = Player((Game.BOARD_WIDTH/2,Game.BOARD_HEIGHT/2))
-    Game.waveHandler = waveHandler()
+    Game.WaveHandler = WaveHandler()
     Game.font = pygame.font.Font('freesansbold.ttf', 30)
   
 
   #Get the object that needs to be checked for damage, if its the player, then get all enemies and enemy bullets, if any collide with the player, then damage the player. If its the enemy, get all player bullets and check if any collide with the enemy, if so, damage the enemy.
   def check_damage(self):
-    for enemy in Enemy.instances:
+    for enemy in self.WaveHandler.currentEnemies:
       if Game.player.rect.colliderect(enemy.rect):
         Game.player.doom()
       #Check if enemy has a gun, if so check if any bullets collide with the player
@@ -25,11 +25,11 @@ class Game():
         for bullet in enemy.gun.bullets:
           if Player.rect.colliderect(bullet["rect"]):
             Game.player.doom()
-    for enemy in Enemy.instances:
+    for enemy in self.WaveHandler.currentEnemies:
       for bullet in Game.player.gun.bullets:
         if enemy.rect.colliderect(bullet["rect"]):
           enemy.damage()
-          Player.gun.remove(bullet)
+          Player.gun.delete(bullet)
 
   def run(self):
     #Setup
@@ -48,7 +48,7 @@ class Game():
 
       #Check for damage
       self.check_damage()
-      current_enemies = self.waveHandler.currentEnemies
+      current_enemies = self.WaveHandler.currentEnemies
 
       #Draw
       Game.screen.fill((255,255,255))
@@ -64,8 +64,8 @@ class Game():
         if enemy.isAlive:
           enemy.update()
         else:
-          self.waveHandler.currentEnemies.remove(enemy)
-      n=self.waveHandler.check()
+          self.WaveHandler.currentEnemies.remove(enemy)
+      n=self.WaveHandler.check()
       if not n:
         running = False
 
