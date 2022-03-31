@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 10
         Player.gun = Gun()
         self.last_shot = time.time()
-        self.gunCooldown = 0
+        self.gunCooldown = 0.5
         self.isAlive = True
 
     def move(self,pressed_keys):
@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         if self.gun.isShooting:
             if self.last_shot+self.gunCooldown < time.time():
                 self.last_shot = time.time()
-                self.gun.create((self.rect.centerx,self.rect.centery),pygame.mouse.get_pos())
+                self.gun.createHoming((self.rect.centerx,self.rect.centery),"mouse")
         self.gun.update()
         game.Game.screen.blit(self.surf, self.rect)
     def doom(self):
