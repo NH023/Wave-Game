@@ -1,6 +1,5 @@
 import pygame
 from player import Player
-from enemy import Enemy
 from WaveHandler import WaveHandler
 pygame.font.init()
 
@@ -23,11 +22,11 @@ class Game():
       #Check if enemy has a gun, if so check if any bullets collide with the player
       if enemy.type == "blaster":
         for bullet in enemy.gun.bullets:
-          if Player.rect.colliderect(bullet["rect"]):
+          if Player.rect.colliderect(bullet.rect):
             Game.player.doom()
     for enemy in self.WaveHandler.currentEnemies:
       for bullet in Game.player.gun.bullets:
-        if enemy.rect.colliderect(bullet["rect"]):
+        if enemy.rect.colliderect(bullet.rect):
           enemy.damage()
           Player.gun.delete(bullet)
 
