@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         if self.gun.isShooting:
             if self.last_shot+self.gunCooldown < time.time():
                 self.last_shot = time.time()
-                self.gun.createHoming((self.rect.centerx,self.rect.centery),"mouse")
+                self.gun.createHoming(self.rect.center,"ClosestEnemy",pygame.mouse.get_pos())
         self.gun.update()
         game.Game.screen.blit(self.surf, self.rect)
     def doom(self):
