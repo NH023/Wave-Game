@@ -5,6 +5,7 @@ import random
 
 
 
+
 def special_division(f,s):
   return f/s if s else 0
 
@@ -12,30 +13,29 @@ def distance_calculate(x1,y1,x2,y2):
   return math.sqrt(pow(x2-x1,2)+pow(y2-y1,2))
 
 class Bullet():
-  def __init__(self,id,pos,rect,velocity,direction,type,initialpos=None,dx=None,dy=None,target=None,current_path=None):
+  def __init__(self,id,pos,rect,direction,homing=False,bounce=False,pierce=False):
     self.id = id
     self.pos = pos
     self.rect = rect
-    self.velocity = velocity
     self.direction = direction
+    self.speed = 15
     self.rect = rect
-    self.type = type
-    #self.initialpos = initialpos
-    #self.dx =dx
-    #self.dy = dy
+    self.homing = homing
+    self.bounce = bounce
+    self.pierce = pierce
+
   def get_self(self):
     return self
 
 class Gun(pygame.sprite.Sprite):
     def __init__(self):
-        self.standard_velocity = 15
         self.isShooting = False
         self.bullets = []
         self.idCount = 0
         super().__init__()
 
     
-    def create(self,initialpos,endpos):
+    def create(self,initialpos,endpos,homing=False,bounce=False,pierce=False):
         
         pos = pygame.math.Vector2(initialpos)
         arctangent = math.atan2(endpos[1]-initialpos[1],endpos[0]-initialpos[0])
@@ -48,30 +48,12 @@ class Gun(pygame.sprite.Sprite):
           center = initialpos
         )
         
-        bullet = Bullet(self.idCount,pos,rect,self.standard_velocity,direction,type="standard")
+        bullet = Bullet(self.idCount,pos,rect,direction,homing=homing,bounce=bounce,pierce=pierce)
 
         self.bullets.append(bullet)
 
         self.idCount += 1
 
-    def createHoming(self,initialpos,_target,mousepos):
-      
-        pos = pygame.math.Vector2(initialpos)
-        arctangent = math.atan2(mousepos[1]-initialpos[1],mousepos[0]-initialpos[0])
-        dx = math.cos(arctangent)
-        dy = math.sin(arctangent)
-        direction = pygame.math.Vector2(dx,dy).normalize()
-        surf = pygame.Surface((5,5))
-        surf.fill((0,0,0))
-        rect = surf.get_rect(
-          center = initialpos
-        )
-        
-        bullet = Bullet(self.idCount,pos,rect,self.standard_velocity,direction,type="homing")
-
-        self.bullets.append(bullet)
-
-        self.idCount += 1
       
   
     def delete(self,bullet):
@@ -92,6 +74,7 @@ class Gun(pygame.sprite.Sprite):
     def prune(self):
         #Gets rid of all bullets not on screen
         for bullet in self.bullets:
+          if not bullet.bounce:
             if bullet.rect.top <= 0 or bullet.rect.bottom >= game.Game.BOARD_HEIGHT or bullet.rect.left <= 0 or bullet.rect.right >= game.Game.BOARD_WIDTH:
                 self.delete(bullet)
     
@@ -99,24 +82,13 @@ class Gun(pygame.sprite.Sprite):
         #Moves position along X axis
         for bullet in self.bullets:
 
-          if bullet.type == "standard":
-
-            bullet.pos += bullet.direction * bullet.velocity
-            bullet.rect.center = bullet.pos
-            pygame.draw.rect(game.Game.screen,(255,0,0),bullet.rect)
-
-
-
-
-
-
-
-          elif bullet.type == "homing":
+          #Homing Bullets WIP
+          if bullet.homing:
             #Homing Missle/Bullet Shinangians
             #Find closest enemy to bullets current position
 
-            target = "enemy"
-            closest = 100000000
+            target = None
+            closest = 99999
             #bulletpos = (bullet.rect.x,bullet.rect.y)
             for instance in game.Game.WaveHandler.currentEnemies:
               EnemyX = instance.rect.x
@@ -129,37 +101,39 @@ class Gun(pygame.sprite.Sprite):
             
             print(bullet.direction)
             
-
+            #Target is below bullet
             if bullet.rect.y > target.rect.y:
               bullet.direction[1] -= 0.1
               if bullet.direction[1] < -1:
-                bullet.direction[1] = 0
+                bullet.direction[1] = -1
+            #Target is above bullet
             elif bullet.rect.y < target.rect.y:
-              bullet.direction[1] += 1
+              bullet.direction[1] += 0.1
               if bullet.direction[1] > 1:
-                bullet.direction[1] = 0
+                bullet.direction[1] = 1
+            #Target is to the right of bullet
             if bullet.rect.x > target.rect.x:
-              bullet.direction[0] -= 1
+              bullet.direction[0] -= 0.1
               if bullet.direction[0] < -1:
-                bullet.direction[0] = 0
+                bullet.direction[0] = -1
+            #Target is to the left of bullet
             elif bullet.rect.x < target.rect.x:
-              bullet.direction[0] += 1
+              bullet.direction[0] += 0.1
               if bullet.direction[0] > 1:
-                bullet.direction[0] = 0
+                bullet.direction[0] = 1
             
-
-            #Normalize direction
-            #bullet.direction = bullet.direction.normalize()
-
-            #Move bullet
-            bullet.pos += bullet.direction * bullet.velocity
-            bullet.rect.center = bullet.pos
-            pygame.draw.rect(game.Game.screen,(255,0,0),bullet.rect)
             
+          if bullet.bounce:
+            if bullet.rect.left < 0 or bullet.rect.right > game.Game.BOARD_WIDTH:
+              bullet.direction[0] = -bullet.direction[0]
+            if bullet.rect.top < 0 or bullet.rect.bottom > game.Game.BOARD_HEIGHT:
+              bullet.direction[1] = -bullet.direction[1]
 
-              
 
-            #game.Game.screen.blit(bullet.surf,bullet.rect)
+          #If the bullet is a bullet - duh   
+          bullet.pos += bullet.direction * bullet.speed
+          bullet.rect.center = bullet.pos
+          pygame.draw.rect(game.Game.screen,(255,0,0),bullet.rect)
 
 
 

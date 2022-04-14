@@ -28,7 +28,8 @@ class Game():
       for bullet in Game.player.gun.bullets:
         if enemy.rect.colliderect(bullet.rect):
           enemy.damage()
-          Player.gun.delete(bullet)
+          if not bullet.pierce: 
+            Player.gun.delete(bullet)
 
   def run(self):
     #Setup
