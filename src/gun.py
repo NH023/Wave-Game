@@ -57,7 +57,6 @@ class Gun(pygame.sprite.Sprite):
       
   
     def delete(self,bullet):
-      print(bullet)
       for index in range(len(self.bullets)):
         if self.bullets[index].id == bullet.id:
           del self.bullets[index]
@@ -78,6 +77,11 @@ class Gun(pygame.sprite.Sprite):
             if bullet.rect.top <= 0 or bullet.rect.bottom >= game.Game.BOARD_HEIGHT or bullet.rect.left <= 0 or bullet.rect.right >= game.Game.BOARD_WIDTH:
                 self.delete(bullet)
     
+    def clear(self):
+      #Cleans all bullets off of the screen for next round
+      self.bullets.clear()
+        
+
     def update(self):
         #Moves position along X axis
         for bullet in self.bullets:
@@ -89,7 +93,7 @@ class Gun(pygame.sprite.Sprite):
 
             target = None
             closest = 99999
-            #bulletpos = (bullet.rect.x,bullet.rect.y)
+
             for instance in game.Game.WaveHandler.currentEnemies:
               EnemyX = instance.rect.x
               EnemyY = instance.rect.y

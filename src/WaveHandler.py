@@ -25,8 +25,7 @@ class WaveHandler():
         newWave = self.waves[self.currentRound]
         newEnemies = []
 
-        for bullet in Player.gun.bullets:
-            Player.gun.delete(bullet)
+        Player.gun.clear()
 
         self.splash()
       
