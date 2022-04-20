@@ -19,7 +19,7 @@ class Game():
     for enemy in self.WaveHandler.currentEnemies:
       if Game.player.rect.colliderect(enemy.rect):
         Game.player.doom()
-      #Check if enemy has a gun, if so check if any bullets collide with the player
+      #Check if enemy type has a gun, if so check if any bullets collide with the player
       if enemy.type == "blaster":
         for bullet in enemy.gun.bullets:
           if Player.rect.colliderect(bullet.rect):
@@ -30,7 +30,7 @@ class Game():
           enemy.damage()
           if not bullet.pierce: 
             Player.gun.delete(bullet)
-
+  
   def run(self):
     #Setup
     running = True
